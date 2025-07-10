@@ -2659,7 +2659,7 @@ Modules.Utilities = function()
 	
 	Utils.Thread = function()
 		local RunService = game:GetService("RunService")
-		local Timer = require(script.Parent.Timer)
+		local Timer = require(Utils.Timer)
 
 		local Thread = {}
 
@@ -2754,7 +2754,11 @@ end
 		return Timer
 	end
 	
-	return Utils
+	return setmetatable({}, {
+		__index = function(p1, p2)
+			return require(Utils[p2])
+		end
+	})
 end
 
 local ProjectileHandler = {}
@@ -2843,7 +2847,6 @@ local function MakeImpactFX(Hit, Position, Normal, Material, ParentToPart, Clien
 		local Sound
 		
 		local function Spawner(material)
-			print(material.Name)
 			if Miscs.HitEffectFolder[material.Name]:FindFirstChild("MaterialSounds") then
 				local tracks = Miscs.HitEffectFolder[material.Name].MaterialSounds:GetChildren()
 				local rn = math.random(1, #tracks)
@@ -3543,7 +3546,7 @@ local function OnRayExited(Origin, Direction, Hit, Position, Normal, Material, T
 end
 
 function ProjectileHandler:VisualizeHitEffect(Type, Hit, Position, Normal, Material, ClientModule, Miscs, Replicate)
-	if Replicate then 
+	if Replicate then
 		VisualizeHitEffect:FireServer(Type, Hit, Position, Normal, Material, ClientModule, Miscs, nil)
 	end
 	local ShowEffects = ScreenCullingEnabled and (ScreenCulling(Position, ScreenCullingRadius) and (Position - Camera.CFrame.p).Magnitude <= RenderDistance) or (Position - Camera.CFrame.p).Magnitude <= RenderDistance
